@@ -1,0 +1,63 @@
+<?php
+if( isset( $_GET[ 'Login' ] ) ) {
+	// Get username
+	$user = $_GET[ 'username' ];
+	// Get password
+	$pass = $_GET[ 'password' ];
+	$pass = md5( $pass );
+	// Check the database
+	$query  = "SELECT * FROM `users` WHERE user = '$user' AND password = '$pass';";
+	$result = mysqli_query($GLOBALS["___mysqli_ston"],  $query ) or die( '<pre>' . ((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)) . '</pre>' );
+	if( $result && mysqli_num_rows( $result ) == 1 ) {
+		// Get users details
+		$row    = mysqli_fetch_assoc( $result );
+		$avatar = $row["avatar"];
+		// Login successful
+		$html .= "<p>Welcome to the password protected area {$user}</p>";
+		$html .= "<img src=\"{$avatar}\" />";
+	}
+	else {
+		// Login failed
+		$html .= "<pre><br />Username and/or password incorrect.</pre>";
+	}
+	((is_null($___mysqli_res = mysqli_close($GLOBALS["___mysqli_ston"]))) ? false : $___mysqli_res);
+}
+?>
+
+1) CW-20: Improper Input Validation 
+(Неправильная проверка вводимых данных)
+// Get username
+$user = $_GET[ 'username' ];
+// Get password
+$pass = $_GET[ 'password' ];
+
+2) CWE-311: Missing Encryption of Sensitive Data 
+(Отсутствует шифрование конфиденциальных данных)
+$pass = $_GET[ 'password' ];
+$pass = md5( $pass );
+
+3)CWE-89: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection') 
+(Неправильная нейтрализация специальных элементов, используемых в SQL-команде)
+$user = $_GET[ 'username' ];
+$pass = $_GET[ 'password' ];
+$pass = md5( $pass );
+$query  = "SELECT * FROM `users` WHERE user = '$user' AND password = '$pass';";
+
+4) CWE-789: Memory Allocation with Excessive Size Value
+(Выделение памяти с чрезмерным значением размера)
+$user = $_GET[ 'username' ];
+$pass = $_GET[ 'password' ];
+
+5) CWE-328: Use of Weak Hash
+(Использование слабого хэша)
+$pass = md5( $pass );
+
+6) CWE-307: Improper Restriction of Excessive Authentication Attempts
+(Неправильное ограничение чрезмерных попыток аутентификации)
+
+7) CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')
+(Неправильная нейтрализация входных данных при генерации веб-страницы)
+$html .= "<p>Welcome to the password protected area {$user}</p>";
+
+8) CWE-306: Missing Authentication for Critical Function
+(Отсутствует аутентификация для критически важной функции)
